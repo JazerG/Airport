@@ -13,10 +13,12 @@ import core.controllers.LocationController;
 import core.controllers.PassengerController;
 import core.controllers.PlaneController;
 import core.controllers.utils.Response;
+import core.controllers.utils.Status;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
@@ -1450,9 +1452,28 @@ public class AirportFrame extends javax.swing.JFrame {
         long phone = Long.parseLong(jTextField5.getText());
         String country = jTextField4.getText();
 
+        
         LocalDate birthDate = LocalDate.of(year, month, day);
         Response response = PassengerController.addPassenger(id, firstname, lastname, birthDate, phoneCode, phone, country);
-
+        
+        switch (response.getStatus()) {
+        case Status.OK:
+        case Status.CREATED:
+            JOptionPane.showMessageDialog(null, "Operación exitosa", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            break;
+        case Status.BAD_REQUEST:
+            JOptionPane.showMessageDialog(null, "Solicitud incorrecta: " + response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            break;
+        case Status.NOT_FOUND:
+            JOptionPane.showMessageDialog(null, "Recurso no encontrado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            break;
+        case Status.INTERNAL_SERVER_ERROR:
+            JOptionPane.showMessageDialog(null, "Error interno del servidor", "Error", JOptionPane.ERROR_MESSAGE);
+            break;
+        default:
+            JOptionPane.showMessageDialog(null, "Respuesta inesperada", "Información", JOptionPane.PLAIN_MESSAGE);
+            break;
+    }
 
     }//GEN-LAST:event_jButton8ActionPerformed
 

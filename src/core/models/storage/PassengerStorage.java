@@ -78,4 +78,14 @@ public class PassengerStorage {
         }
         return passengers;
     }
+    public static boolean existsById(long id) {
+    List<Passenger> passengers = getAllPassengers();
+    for (Passenger p : passengers) {
+        if (p.getId() == id) {
+            return true;
+        }
+    }
+    return false;
+}
+    
 }
