@@ -9,6 +9,7 @@ import core.controllers.utils.Status;
 import core.models.Location;
 import core.models.storage.LocationStorage;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  *
@@ -30,5 +31,8 @@ public class LocationController {
         }
 
         return new Response("Location successfully added", Status.OK, newLocation);
+    }
+    public static List<Location> getLocations() {
+        return LocationStorage.getAllLocations();
     }
 }

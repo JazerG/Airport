@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LocationStorage {
@@ -35,12 +38,12 @@ public class LocationStorage {
             
             
             JSONObject newLocation = new JSONObject();
-            newLocation.put("AirportId", location.getAirportId());
-            newLocation.put("AirportName", location.getAirportName());
-            newLocation.put("AirportCity", location.getAirportCity());
-            newLocation.put("AirportCountry", location.getAirportCountry());
-            newLocation.put("AirportLatitude", location.getAirportLatitude());
-            newLocation.put("AirportLongitude", location.getAirportLongitude());
+            newLocation.put("airportId", location.getAirportId());
+            newLocation.put("airportName", location.getAirportName());
+            newLocation.put("airportCity", location.getAirportCity());
+            newLocation.put("airportCountry", location.getAirportCountry());
+            newLocation.put("airportLatitude", location.getAirportLatitude());
+            newLocation.put("airportLongitude", location.getAirportLongitude());
             
             
 
@@ -54,5 +57,29 @@ public class LocationStorage {
             e.printStackTrace();
             return false;
         }
+    }
+    public static List<Location> getAllLocations() {
+        List<Location> locations = new ArrayList<>();
+        try {
+            String content = new String(Files.readAllBytes(Paths.get("json/locations.json")));
+            JSONArray jsonArray = new JSONArray(content);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                Location p = new Location(
+                        obj.getString("airportId"),
+                        obj.getString("airportName"),
+                        obj.getString("airportCity"),
+                        obj.getString("airportCountry"),
+                        obj.getDouble("airportLatitude"),
+                        obj.getDouble("airportLongitude")
+                        
+                );
+                locations.add(p);
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return locations;
     }
 }

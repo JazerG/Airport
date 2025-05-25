@@ -8,6 +8,7 @@ import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import core.models.Passenger;
 import core.models.storage.PassengerStorage;
+import java.util.List;
 import java.time.LocalDate;
 
 public class PassengerController {
@@ -44,4 +45,9 @@ public class PassengerController {
 
         return new Response("Passenger successfully added", Status.OK, newPassenger);
     }
+   public static List<Passenger> getPassengers() {
+        return PassengerStorage.getAllPassengers();
+    }
 }
+    
+

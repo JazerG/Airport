@@ -6,7 +6,8 @@ package core.models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
+import org.json.JSONObject;
+import java.time.format.DateTimeFormatter;
 /**
  *
  * @author edangulo
@@ -115,4 +116,6 @@ public class Flight {
         return passengers.size();
     }
     
+
+
 }

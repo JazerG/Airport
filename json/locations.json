@@ -96,11 +96,11 @@
         "airportLongitude": -6.2701
     },
     {
-        "AirportLatitude": 45.0358,
-        "AirportLongitude": 2.0395,
-        "AirportId": "MSA",
-        "AirportName": "Madrid Airport",
-        "AirportCity": "Madrid",
-        "AirportCountry": "Spain"
+        "airportName": "Madrid Airport",
+        "airportCountry": "Spain",
+        "airportCity": "Madrid",
+        "airportLatitude": 42.4256,
+        "airportId": "MSA",
+        "airportLongitude": 2.0425
     }
 ]
