@@ -18,7 +18,7 @@ import java.util.List;
 public class LocationController {
     public static Response addLocation(String id, String name,String city, String country, Double latitude,Double longitude) {
         
-
+        
         
         
         Location newLocation = new Location(id, name, city, country, latitude, longitude);

@@ -12,12 +12,14 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import core.controllers.LocationController;
 import core.controllers.PassengerController;
 import core.controllers.PlaneController;
+import core.controllers.UIController;
 import core.controllers.utils.Response;
 import core.controllers.utils.Status;
 import java.awt.Color;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
@@ -39,7 +41,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
     public AirportFrame() {
         initComponents();
-
+        getAllPassengerIdsIntoComboBox();
         this.passengers = new ArrayList<>();
         this.planes = new ArrayList<>();
         this.locations = new ArrayList<>();
@@ -48,53 +50,25 @@ public class AirportFrame extends javax.swing.JFrame {
         this.setBackground(new Color(0, 0, 0, 0));
         this.setLocationRelativeTo(null);
 
-        this.generateMonths();
-        this.generateDays();
-        this.generateHours();
-        this.generateMinutes();
-        this.blockPanels();
+        UIController controllerP = new UIController();
+
+// Para bloquear pestañas
+        controllerP.blockPanels(jTabbedPane1);
+
+// Para generar combos
+        controllerP.generateMonths(MONTH, MONTH1, MONTH5);
+        controllerP.generateDays(DAY, DAY1, DAY5);
+        controllerP.generateHours(MONTH2, MONTH3, MONTH4, jComboBox6);
+        controllerP.generateMinutes(DAY2, DAY3, DAY4, jComboBox8);
+
     }
 
-    private void blockPanels() {
-        //9, 11
-        for (int i = 1; i < jTabbedPane1.getTabCount(); i++) {
-            if (i != 9 && i != 11) {
-                jTabbedPane1.setEnabledAt(i, false);
-            }
-        }
-    }
+    private void getAllPassengerIdsIntoComboBox() {
+        PassengerController controller = new PassengerController();
+        List<String> ids = controller.getAllPassengerIds();
+        for (String id : ids) {
+            userSelect.addItem(id);
 
-    private void generateMonths() {
-        for (int i = 1; i < 13; i++) {
-            MONTH.addItem("" + i);
-            MONTH1.addItem("" + i);
-            MONTH5.addItem("" + i);
-        }
-    }
-
-    private void generateDays() {
-        for (int i = 1; i < 32; i++) {
-            DAY.addItem("" + i);
-            DAY1.addItem("" + i);
-            DAY5.addItem("" + i);
-        }
-    }
-
-    private void generateHours() {
-        for (int i = 0; i < 24; i++) {
-            MONTH2.addItem("" + i);
-            MONTH3.addItem("" + i);
-            MONTH4.addItem("" + i);
-            jComboBox6.addItem("" + i);
-        }
-    }
-
-    private void generateMinutes() {
-        for (int i = 0; i < 60; i++) {
-            DAY2.addItem("" + i);
-            DAY3.addItem("" + i);
-            DAY4.addItem("" + i);
-            jComboBox8.addItem("" + i);
         }
     }
 
@@ -107,8 +81,8 @@ public class AirportFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelRound1 = new core.views.PanelRound();
-        panelRound2 = new core.views.PanelRound();
+        panelRound1 = new airport.PanelRound();
+        panelRound2 = new airport.PanelRound();
         jButton13 = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
@@ -245,7 +219,7 @@ public class AirportFrame extends javax.swing.JFrame {
         jLabel48 = new javax.swing.JLabel();
         jComboBox8 = new javax.swing.JComboBox<>();
         jButton7 = new javax.swing.JButton();
-        panelRound3 = new core.views.PanelRound();
+        panelRound3 = new airport.PanelRound();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -1452,28 +1426,27 @@ public class AirportFrame extends javax.swing.JFrame {
         long phone = Long.parseLong(jTextField5.getText());
         String country = jTextField4.getText();
 
-        
         LocalDate birthDate = LocalDate.of(year, month, day);
         Response response = PassengerController.addPassenger(id, firstname, lastname, birthDate, phoneCode, phone, country);
-        
+
         switch (response.getStatus()) {
-        case Status.OK:
-        case Status.CREATED:
-            JOptionPane.showMessageDialog(null, "Operación exitosa", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            break;
-        case Status.BAD_REQUEST:
-            JOptionPane.showMessageDialog(null, "Solicitud incorrecta: " + response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            break;
-        case Status.NOT_FOUND:
-            JOptionPane.showMessageDialog(null, "Recurso no encontrado", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            break;
-        case Status.INTERNAL_SERVER_ERROR:
-            JOptionPane.showMessageDialog(null, "Error interno del servidor", "Error", JOptionPane.ERROR_MESSAGE);
-            break;
-        default:
-            JOptionPane.showMessageDialog(null, "Respuesta inesperada", "Información", JOptionPane.PLAIN_MESSAGE);
-            break;
-    }
+            case Status.OK:
+            case Status.CREATED:
+                JOptionPane.showMessageDialog(null, "Operación exitosa", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                break;
+            case Status.BAD_REQUEST:
+                JOptionPane.showMessageDialog(null, "Solicitud incorrecta: " + response.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                break;
+            case Status.NOT_FOUND:
+                JOptionPane.showMessageDialog(null, "Recurso no encontrado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                break;
+            case Status.INTERNAL_SERVER_ERROR:
+                JOptionPane.showMessageDialog(null, "Error interno del servidor", "Error", JOptionPane.ERROR_MESSAGE);
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Respuesta inesperada", "Información", JOptionPane.PLAIN_MESSAGE);
+                break;
+        }
 
     }//GEN-LAST:event_jButton8ActionPerformed
 
@@ -1646,7 +1619,7 @@ public class AirportFrame extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        
+
         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
         model.setRowCount(0);
         for (Passenger p : PassengerController.getPassengers()) {
@@ -1680,9 +1653,7 @@ public class AirportFrame extends javax.swing.JFrame {
                 p.getBrand(),
                 p.getModel(),
                 p.getMaxCapacity(),
-                p.getAirline(),
-                
-            });
+                p.getAirline(),});
         }
     }//GEN-LAST:event_jButton5ActionPerformed
 
@@ -1690,12 +1661,12 @@ public class AirportFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         DefaultTableModel model = (DefaultTableModel) jTable5.getModel();
         model.setRowCount(0);
-         for (Location p : LocationController.getLocations()) {
+        for (Location p : LocationController.getLocations()) {
             model.addRow(new Object[]{
                 p.getAirportId(),
                 p.getAirportName(),
                 p.getAirportCity(),
-                p.getAirportCountry()           
+                p.getAirportCountry()
             });
         }
     }//GEN-LAST:event_jButton6ActionPerformed
@@ -1721,21 +1692,7 @@ public class AirportFrame extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        System.setProperty("flatlaf.useNativeLibrary", "false");
-
-        try {
-            UIManager.setLookAndFeel(new FlatDarkLaf());
-        } catch (Exception ex) {
-            System.err.println("Failed to initialize LaF");
-        }
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AirportFrame().setVisible(true);
-            }
-        });
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> DAY;
@@ -1872,9 +1829,9 @@ public class AirportFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
-    private core.views.PanelRound panelRound1;
-    private core.views.PanelRound panelRound2;
-    private core.views.PanelRound panelRound3;
+    private airport.PanelRound panelRound1;
+    private airport.PanelRound panelRound2;
+    private airport.PanelRound panelRound3;
     private javax.swing.JRadioButton user;
     private javax.swing.JComboBox<String> userSelect;
     // End of variables declaration//GEN-END:variables

@@ -10,6 +10,7 @@ import core.models.Passenger;
 import core.models.storage.PassengerStorage;
 import java.util.List;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class PassengerController {
 
@@ -26,7 +27,6 @@ public class PassengerController {
         return new Response("El número de teléfono no puede estar vacío.", Status.BAD_REQUEST);
     }
 
-    // Validar ID
     if (id < 0 || String.valueOf(id).length() > 15) {
         return new Response("El ID debe ser mayor o igual a 0 y tener máximo 15 dígitos.", Status.BAD_REQUEST);
     }
@@ -35,7 +35,7 @@ public class PassengerController {
         return new Response("Ya existe un pasajero con este ID.", Status.BAD_REQUEST);
     }
 
-    // Validar campos de texto vacíos
+    
     if (firstname == null || firstname.trim().isEmpty()) {
         return new Response("El nombre no puede estar vacío.", Status.BAD_REQUEST);
     }
@@ -48,7 +48,6 @@ public class PassengerController {
         return new Response("El país no puede estar vacío.", Status.BAD_REQUEST);
     }
 
-    // Validar fecha de nacimiento
     if (birthDate == null) {
         return new Response("La fecha de nacimiento es requerida.", Status.BAD_REQUEST);
     }
@@ -77,4 +76,12 @@ public class PassengerController {
     public static List<Passenger> getPassengers() {
         return PassengerStorage.getAllPassengers();
     }
+    public List<String> getAllPassengerIds() {
+    List<Passenger> passengers = PassengerStorage.getAllPassengers();
+    List<String> ids = new ArrayList<>();
+    for (Passenger p : passengers) {
+        ids.add(String.valueOf(p.getId()));
+    }
+    return ids;
+}
 }
