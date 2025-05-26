@@ -1,42 +1,45 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+// core/models/storage/LocationStorage.java
 package core.models.storage;
 
-/**
- *
- * @author jazer
- */
 import core.models.Location;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class LocationStorage {
 
-    private final String filePath = "json/locations.json";
+    private static final String FILE_PATH = "json/locations.json";
 
     public boolean addLocation(Location location) {
         try {
-            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            // Aseguramos que el fichero existe
+            File f = new File(FILE_PATH);
+            if (!f.exists()) {
+                f.getParentFile().mkdirs();
+                Files.write(Paths.get(FILE_PATH), "[]".getBytes(), StandardOpenOption.CREATE);
+            }
+
+            String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
             JSONArray jsonArray = new JSONArray(content);
 
-            // Validar si el ID ya existe
+            // ID duplicado?
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
                 if (obj.getString("airportId").equals(location.getAirportId())) {
-                    return false; // ID duplicado
+                    return false;
                 }
-            }          
-            
-            
+            }
+
+            // Construimos el objeto JSON
             JSONObject newLocation = new JSONObject();
             newLocation.put("airportId", location.getAirportId());
             newLocation.put("airportName", location.getAirportName());
@@ -44,42 +47,57 @@ public class LocationStorage {
             newLocation.put("airportCountry", location.getAirportCountry());
             newLocation.put("airportLatitude", location.getAirportLatitude());
             newLocation.put("airportLongitude", location.getAirportLongitude());
-            
-            
 
-            // Agregar al array y guardar archivo
+            // Lo agregamos y guardamos
             jsonArray.put(newLocation);
-            Files.write(Paths.get(filePath), jsonArray.toString(4).getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
-
+            try ( FileWriter writer = new FileWriter(FILE_PATH)) {
+                writer.write(jsonArray.toString(4));
+            }
             return true;
 
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
             return false;
         }
     }
-    public static List<Location> getAllLocations() {
+
+    public List<Location> getAllLocations() {
         List<Location> locations = new ArrayList<>();
         try {
-            String content = new String(Files.readAllBytes(Paths.get("json/locations.json")));
+            String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
             JSONArray jsonArray = new JSONArray(content);
-
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
-                Location p = new Location(
+                locations.add(new Location(
                         obj.getString("airportId"),
                         obj.getString("airportName"),
                         obj.getString("airportCity"),
                         obj.getString("airportCountry"),
                         obj.getDouble("airportLatitude"),
                         obj.getDouble("airportLongitude")
-                        
-                );
-                locations.add(p);
+                ));
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         return locations;
+    }
+
+    public boolean existsById(String id) {
+        for (Location l : getAllLocations()) {
+            if (l.getAirportId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Location getById(String id) {
+        for (Location l : getAllLocations()) {
+            if (l.getAirportId().equals(id)) {
+                return l;
+            }
+        }
+        throw new IllegalArgumentException("No se encontró una ubicación con ID: " + id);
     }
 }

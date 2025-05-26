@@ -1,80 +1,103 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package core.models.storage;
 
 import core.models.Plane;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-/**
- *
- * @author jazer
- */
 public class PlaneStorage {
 
-    private final String filePath = "json/planes.json";
+    private static final String FILE_PATH = "json/planes.json";
+
+    private void ensureFileExists() throws IOException {
+        File f = new File(FILE_PATH);
+        if (!f.exists()) {
+            f.getParentFile().mkdirs();
+            Files.write(Paths.get(FILE_PATH), "[]".getBytes(), StandardOpenOption.CREATE);
+        }
+    }
 
     public boolean addPlane(Plane plane) {
         try {
-            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            ensureFileExists();
+
+            String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
             JSONArray jsonArray = new JSONArray(content);
 
-            // Validar si el ID ya existe
+            // 1) Verificar duplicados
             for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject obj = jsonArray.getJSONObject(i);
-                if (obj.getString("id").equals(plane.getId())) {
-                    return false; // ID duplicado
+                if (jsonArray.getJSONObject(i).getString("id").equals(plane.getId())) {
+                    return false; // ya existe
                 }
             }
 
-            JSONObject newPlane = new JSONObject();
-            newPlane.put("maxCapacity", plane.getMaxCapacity());
-            newPlane.put("model", plane.getModel());
-            newPlane.put("id", plane.getId());
-            newPlane.put("airline", plane.getAirline());
-            newPlane.put("brand", plane.getBrand());
+            // 2) Construir objeto JSON
+            JSONObject obj = new JSONObject();
+            obj.put("id", plane.getId());
+            obj.put("brand", plane.getBrand());
+            obj.put("model", plane.getModel());
+            obj.put("maxCapacity", plane.getMaxCapacity());
+            obj.put("airline", plane.getAirline());
 
-            // Agregar al array y guardar archivo
-            jsonArray.put(newPlane);
-            Files.write(Paths.get(filePath), jsonArray.toString(4).getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+            // 3) Añadir al array y grabar
+            jsonArray.put(obj);
+            try ( FileWriter writer = new FileWriter(FILE_PATH)) {
+                writer.write(jsonArray.toString(4));
+            }
 
             return true;
-
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public static List<Plane> getAllPlanes() {
+    public List<Plane> getAllPlanes() {
         List<Plane> planes = new ArrayList<>();
         try {
-            String content = new String(Files.readAllBytes(Paths.get("json/planes.json")));
+            ensureFileExists();
+
+            String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
             JSONArray jsonArray = new JSONArray(content);
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
-                Plane p = new Plane(
+                planes.add(new Plane(
                         obj.getString("id"),
                         obj.getString("brand"),
                         obj.getString("model"),
                         obj.getInt("maxCapacity"),
-                        obj.getString("airline")               
-                );
-                planes.add(p);
+                        obj.getString("airline")
+                ));
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         return planes;
+    }
+
+    public static boolean existsById(String id) {
+        return new PlaneStorage()
+                .getAllPlanes()
+                .stream()
+                .anyMatch(p -> p.getId().equals(id));
+    }
+
+    public Plane getById(String id) {
+        for (Plane p : getAllPlanes()) {
+            if (p.getId().equals(id)) {
+                return p;
+            }
+        }
+        throw new IllegalArgumentException("No se encontró un avión con ID: " + id);
     }
 }

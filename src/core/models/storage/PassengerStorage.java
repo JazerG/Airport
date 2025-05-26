@@ -54,6 +54,43 @@ public class PassengerStorage {
         }
     }
 
+    public boolean updatePassenger(Passenger passenger) {
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            JSONArray jsonArray = new JSONArray(content);
+
+            boolean found = false;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                if (obj.getLong("id") == passenger.getId()) {
+                    obj.put("firstname", passenger.getFirstname());
+                    obj.put("lastname", passenger.getLastname());
+                    obj.put("birthDate", passenger.getBirthDate().toString());
+                    obj.put("countryPhoneCode", passenger.getCountryPhoneCode());
+                    obj.put("phone", String.valueOf(passenger.getPhone()));
+                    obj.put("country", passenger.getCountry());
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                return false;
+            }
+
+            Files.write(
+                    Paths.get(filePath),
+                    jsonArray.toString(4).getBytes(),
+                    StandardOpenOption.TRUNCATE_EXISTING
+            );
+
+            return true;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static List<Passenger> getAllPassengers() {
         List<Passenger> passengers = new ArrayList<>();
         try {
@@ -78,14 +115,25 @@ public class PassengerStorage {
         }
         return passengers;
     }
+
     public static boolean existsById(long id) {
-    List<Passenger> passengers = getAllPassengers();
-    for (Passenger p : passengers) {
-        if (p.getId() == id) {
-            return true;
+        List<Passenger> passengers = getAllPassengers();
+        for (Passenger p : passengers) {
+            if (p.getId() == id) {
+                return true;
+            }
         }
+        return false;
     }
-    return false;
-}
     
+    public Passenger getById(long id) {
+        List<Passenger> passengers = getAllPassengers();
+        for (Passenger p : passengers) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
+    }
+
 }

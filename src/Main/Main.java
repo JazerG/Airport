@@ -8,7 +8,7 @@ package Main;
  *
  * @author jazer
  */
-import airport.AirportFrame;
+import core.views.AirportFrame;
 import javax.swing.UIManager;
 import com.formdev.flatlaf.FlatDarkLaf;
 
