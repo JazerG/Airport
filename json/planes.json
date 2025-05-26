@@ -1,0 +1,93 @@
+[
+    {
+        "maxCapacity": 210,
+        "model": "737 MAX",
+        "id": "AB12345",
+        "airline": "American Airlines",
+        "brand": "Boeing"
+    },
+    {
+        "maxCapacity": 194,
+        "model": "A320neo",
+        "id": "CD67890",
+        "airline": "Delta Airlines",
+        "brand": "Airbus"
+    },
+    {
+        "maxCapacity": 296,
+        "model": "787 Dreamliner",
+        "id": "EF11223",
+        "airline": "United Airlines",
+        "brand": "Boeing"
+    },
+    {
+        "maxCapacity": 146,
+        "model": "E195-E2",
+        "id": "GH44556",
+        "airline": "Azul Linhas Aéreas",
+        "brand": "Embraer"
+    },
+    {
+        "maxCapacity": 325,
+        "model": "A350-900",
+        "id": "IJ77889",
+        "airline": "Lufthansa",
+        "brand": "Airbus"
+    },
+    {
+        "maxCapacity": 90,
+        "model": "CRJ900",
+        "id": "KL33445",
+        "airline": "Air Canada",
+        "brand": "Bombardier"
+    },
+    {
+        "maxCapacity": 396,
+        "model": "777-300ER",
+        "id": "MN55667",
+        "airline": "Emirates",
+        "brand": "Boeing"
+    },
+    {
+        "maxCapacity": 277,
+        "model": "A330-300",
+        "id": "OP88990",
+        "airline": "Qatar Airways",
+        "brand": "Airbus"
+    },
+    {
+        "maxCapacity": 88,
+        "model": "SpaceJet M90",
+        "id": "QR66778",
+        "airline": "All Nippon Airways",
+        "brand": "Mitsubishi"
+    },
+    {
+        "maxCapacity": 210,
+        "model": "Tu-204",
+        "id": "ST99001",
+        "airline": "Rossiya Airlines",
+        "brand": "Tupolev"
+    },
+    {
+        "maxCapacity": 108,
+        "model": "Superjet 100",
+        "id": "UV22334",
+        "airline": "Aeroflot",
+        "brand": "Sukhoi"
+    },
+    {
+        "maxCapacity": 168,
+        "model": "C919",
+        "id": "WX55678",
+        "airline": "China Eastern Airlines",
+        "brand": "Comac"
+    },
+    {
+        "maxCapacity": 2,
+        "model": "F-35",
+        "id": "GO54321",
+        "airline": "American Airforce",
+        "brand": "comac"
+    }
+]
